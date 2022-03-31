@@ -5,10 +5,12 @@ const {
   createTask,
   updateTask,
   deleteTask,
-} = require("../controllers/boardController.js");
+  guestBoard,
+} = require("../controllers/boardController");
 
 //@Route: /tasks
-router.route("/").get(getAllTasks).push(createTask);
+router.route("/").get(getAllTasks).post(createTask);
 router.route("/:id").put(updateTask).delete(deleteTask);
+router.route("/guest").get(guestBoard);
 
 module.exports = router;

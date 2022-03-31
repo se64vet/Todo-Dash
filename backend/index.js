@@ -1,6 +1,8 @@
-const express = require('express')
-const cors = require('cors')
+const cors = require("cors");
+const { json, urlencoded } = require("express");
+const express = require("express");
 const app = express();
+require("dotenv").config();
 const connectDB = require("./config/connect.mongodb");
 app.use(
   cors({
@@ -25,12 +27,15 @@ const initial_data = {
   },
   "columnOrder": ["column-1", "column-2", "column-3"],
 };
+// express built-in utils
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
   res.send({ board: initial_data });
 });
-app.use("/board", require("./routes/boardRoute")); //off load to route file
-app.use("/", require("./routes/userRoute"));
+app.use("/api/board", require("./routes/boardRoute")); //off load to route file
+//app.use("/api/user", require("./routes/userRoute"));
 
 //start server
 const PORT = process.env.PORT || 5000;
@@ -41,7 +46,7 @@ const start = async () => {
       console.log(`server is running on ${PORT}`);
     });
   } catch (error) {
-    throw new Error({ message: error.message });
+    throw new Error(error.message);
   }
 };
 
