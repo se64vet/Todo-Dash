@@ -8,8 +8,10 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 2px solid black;
+  border-radius: 10px;
   padding: 1.5em;
+  background-color: ${props => props.theme.primary};
+  border: 2px solid ${props => props.theme.primaryText};
 `;
 const Title = styled.h1`
   padding: 1rem;
@@ -19,31 +21,49 @@ const Main = styled.div`
   display: flex;
   justify-content: center;
   align-items: start;
+
+  @media only screen and (max-width: 768px){
+    flex-direction: column;
+  }
 `;
+
+const DeleteBtn = styled.div`
+padding: 2em;
+width: fit-content;
+text-align: center;
+`
 const Board = () => {
   //states
   const initialState = { "tasks": {}, "column": {}, "columnOrder": [] };
   const [board, setBoard] = useState(initialState);
+  const [displayDeleteBtn, setDisplayDeleteBtn] = useState(false);
+
 
   //component life-cycle
   useEffect(() => {
-    fetchBoard().then((data) => setBoard(data));
+    fetchGuestBoard().then((data) => setBoard(data));
   }, []);
 
   //functions
-  const fetchBoard = async () => {
+  const fetchGuestBoard = async () => {
     try {
-      const response = await fetch("http://localhost:5000");
+      const response = await fetch("http://localhost:5000/api/board/guest");
       const data = await response.json();
-      return data.board;
+      return data;
     } catch (error) {
       console.log(error);
     }
   };
+  const onDragStart = (result)=>{
+    if(result.type === 'task'){
+      setDisplayDeleteBtn(true);
+    }
+    
+  }
 
   const onDragEnd = (result) => {
     const { source, destination, draggableId, type } = result;
-
+    setDisplayDeleteBtn(false);
     //no destination drop
     if (!destination) {
       return;
@@ -71,6 +91,8 @@ const Board = () => {
     const startColumn = board.column[source.droppableId];
     const endColumn = board.column[destination.droppableId];
 
+   
+
     //moving task in the same column
     if (startColumn === endColumn) {
       const newTasksIds = startColumn.tasksIds;
@@ -88,8 +110,35 @@ const Board = () => {
         },
       });
     }
+   
+
     //moving task accross columns
     if (startColumn !== endColumn) {
+
+      // DELETE TASK
+      if(destination.droppableId === 'deleteTask'){
+        const newBoard = {...board}
+        // delete task in tasks list
+        let newTasksList = board.tasks;
+        delete newTasksList[draggableId]
+        // remove task id in column
+        let {tasksIds} = startColumn;
+        let newStartTasksIds = tasksIds.filter(task => task != draggableId);
+        const newStartColumn = { ...startColumn, tasksIds: newStartTasksIds };
+
+        // update Board
+        setBoard({
+          ...board,
+          column: {
+            ...board.column,
+            [newStartColumn.id]: newStartColumn,
+          },
+          tasks: newTasksList,
+        });
+       return;
+     }
+
+     // MOVE TASKS
       const newStartTasksIds = startColumn.tasksIds;
       const newEndTasksIds = endColumn.tasksIds;
       newStartTasksIds.splice(source.index, 1);
@@ -107,6 +156,7 @@ const Board = () => {
         },
       });
     }
+    
   };
 
   function addNewTask(newTask, colId) {
@@ -126,10 +176,14 @@ const Board = () => {
   }
   return (
     <Container>
-      <Title>Hydro board</Title>
-      <DragDropContext onDragEnd={onDragEnd}>
+      <Title>
+        <h1>Todo Dash</h1>
+        <p style={{fontSize: "large",fontWeight: "normal", fontStyle: "italic", textAlign: "center"}}>Minimalist todo app</p>
+      </Title>
+      <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
         <Droppable droppableId="mainBoard" type="column" direction="horizontal">
           {(provided) => (
+       
             <Main {...provided.droppableProps} ref={provided.innerRef}>
               {board.columnOrder.map((columnId, idx) => (
                 <Column
@@ -144,6 +198,22 @@ const Board = () => {
             </Main>
           )}
         </Droppable>
+
+         <Droppable droppableId="deleteTask" type="task">
+          {(provided)=> (
+           <DeleteBtn 
+           {...provided.droppableProps} 
+           ref={provided.innerRef}
+           style = {{
+             visibility: displayDeleteBtn ? "visible": "hidden"
+           }}>
+            ❌ delete task
+          </DeleteBtn>
+          
+          )}
+          
+        </Droppable>
+
       </DragDropContext>
     </Container>
   );

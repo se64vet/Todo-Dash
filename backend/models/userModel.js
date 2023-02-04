@@ -6,6 +6,7 @@ const userSchema = new Schema(
     name: {
       type: String,
       required: [true, "Error: Name is empty!"],
+      unique: true
     },
     email: {
       type: String,

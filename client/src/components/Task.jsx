@@ -4,8 +4,11 @@ import { Draggable } from "react-beautiful-dnd";
 const Container = styled.div`
   text-align: center;
   padding: 1em 3em;
-  background: lightgrey;
+  background: ${props => props.theme.secondary}; 
+  border-radius: 10px;
   margin: 5px 0;
+  color: ${props => props.theme.primary};
+  font-weight: bold;
 `;
 const Task = (props) => {
   return (

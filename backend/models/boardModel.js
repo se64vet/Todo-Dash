@@ -27,21 +27,13 @@ const columnSchema = new Schema({
   },
 });
 
-// user: {
-//   type: mongoose.Schema.Types.ObjectId,
-//   ref: "User", //reference to another schema
-// },
-// board: {
-//   tasks: {},
-//   column: {},
-//   columnOrder: Array,
-// },
+
 
 const boardSchema = new Schema(
   {
     user: {
       type: mongoose.ObjectId,
-      
+      ref: 'User',
       required: [true, 'no user id'],
       default: new mongoose.Types.ObjectId()
     },
@@ -72,7 +64,7 @@ const boardSchema = new Schema(
       required: [true, 'missing column order'],
       default: ["column-1", "column-2", "column-3"]
     }
-  }
+  }, {strict: true}
 );
 
 // create initial board

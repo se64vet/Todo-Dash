@@ -1,42 +1,36 @@
 const asyncHandler = require("express-async-handler");
 const {Board} = require("../models/boardModel");
 
-//@route: GET /api/board
-//@desc: get all tasks
-const getAllTasks = asyncHandler(async (req, res) => {
-  res.send("getAllTask");
-});
 
-//@route: POST /api/board
-//@desc: create new task
-const createTask = asyncHandler(async (req, res) => {
-  res.send("create Task");
-});
 
-//@route: PUT /api/board/:id
-//@desc: update task
-const updateTask = asyncHandler(async (req, res) => {
-  res.send("update task by id");
-});
-
-//@route: DELETE /api/board/:id
-//@desc: delete task
-const deleteTask = asyncHandler(async (req, res) => {
-  res.send("delete task by id");
-});
-
-//-----------test
+// @desc: guets initial board
+// @route: GET api/board/guest
 const guestBoard = asyncHandler(async (req, res) => {
-  await Board.create({})
-  const data = await Board.find({});
+  const newBoard = await Board.create({guest: true})
+  const data = await Board.findById(newBoard._id);
   res.json(data);
 });
 
+// @desc: user intial board
+// @route: GET api/board/user/:userId
+const initialBoard = asyncHandler(async (req, res) => {
+  const {userId} = req.params
+  const newBoard = await Board.create({guest: false, user: userId})
+  const data = await Board.findById(newBoard._id);
+  res.json(data);
+});
+
+// @desc: user update board
+// @route: PUT api/board/user/:userId
+const updateBoard = asyncHandler(async (req, res) => {
+  const {userId} = req.params
+  const {updatedBoard} = req.body
+  const data = await Board.findOneAndReplace({user: userId}, updatedBoard);
+  res.json(data);
+});
 module.exports = {
-  getAllTasks,
-  createTask,
-  updateTask,
-  deleteTask,
+  initialBoard,
+  updateBoard,
   guestBoard,
 };
 

@@ -10,7 +10,8 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: start;
   align-items: center;
-  border: 1px solid black;
+  border: 2px solid ${props => props.theme.primaryText};
+  border-radius: 10px;
   margin: 1em;
   padding: 0.5em;
   min-height: 20em;
@@ -33,13 +34,12 @@ const NewTask = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.5em;
+  
 `;
 
 const NewTaskBtn = styled.div`
   width: fit-content;
   aspect-ratio: 1/1;
-  border: 1px solid black;
   padding: 0.125em;
   text-align: center;
   font-weight: bold;
