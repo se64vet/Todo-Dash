@@ -45,9 +45,11 @@ const Board = () => {
   }, []);
 
   //functions
+  const url = process.env.REACT_APP_INIT_BOARD + "/api/board/guest";
+  console.log(url)
   const fetchGuestBoard = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/board/guest");
+      const response = await fetch(url);
       const data = await response.json();
       return data;
     } catch (error) {
