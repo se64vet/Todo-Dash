@@ -6,7 +6,7 @@ require("dotenv").config();
 const connectDB = require("./config/connect.mongodb");
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://todo-dash.onrender.com",
   })
 );
 
