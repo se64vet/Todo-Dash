@@ -46,7 +46,6 @@ const Board = () => {
 
   //functions
   const url = process.env.REACT_APP_INIT_BOARD + "/api/board/guest";
-  console.log(url)
   const fetchGuestBoard = async () => {
     try {
       const response = await fetch(url);
@@ -119,13 +118,12 @@ const Board = () => {
 
       // DELETE TASK
       if(destination.droppableId === 'deleteTask'){
-        const newBoard = {...board}
         // delete task in tasks list
         let newTasksList = board.tasks;
         delete newTasksList[draggableId]
         // remove task id in column
         let {tasksIds} = startColumn;
-        let newStartTasksIds = tasksIds.filter(task => task != draggableId);
+        let newStartTasksIds = tasksIds.filter(task => task !== draggableId);
         const newStartColumn = { ...startColumn, tasksIds: newStartTasksIds };
 
         // update Board
@@ -187,7 +185,7 @@ const Board = () => {
           {(provided) => (
        
             <Main {...provided.droppableProps} ref={provided.innerRef}>
-              {board.columnOrder.map((columnId, idx) => (
+              {board === initialState ? <h3>loading</h3> : board.columnOrder.map((columnId, idx) => (
                 <Column
                   key={columnId}
                   column={board.column[columnId]}

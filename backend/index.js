@@ -7,6 +7,7 @@ const connectDB = require("./config/connect.mongodb");
 app.use(
   cors({
     origin: "https://todo-dash-app.onrender.com",
+    // origin: "http://localhost:3000"
   })
 );
 

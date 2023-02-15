@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Draggable, Droppable } from "react-beautiful-dnd";
-import { toast, Zoom } from "react-toastify";
+import { toast } from "react-toastify";
 import Task from "./Task";
 
 //styled components
@@ -118,7 +118,6 @@ const Column = (props) => {
     toast.success("Added!", { ...toastProps, autoClose: 1000 });
     setNewTask(initialTask);
   }
-
   return (
     //draging column
     <Draggable draggableId={props.column.id} index={props.index}>
@@ -131,7 +130,7 @@ const Column = (props) => {
             {(provided) => (
               <TaskList {...provided.droppableProps} ref={provided.innerRef}>
                 {props.column.tasksIds.map((taskId, idx) => (
-                  <Task key={taskId} item={props.tasks[taskId]} index={idx} />
+                  <Task key={taskId} item={props.tasks[taskId]} index={idx} colId={props.column.id}/>
                 ))}
                 {provided.placeholder}
               </TaskList>
